@@ -788,6 +788,9 @@ def create_argument_parser():
            help='if the Swift Benchmark Suite is run after building, run N '
                 'iterations with -Onone')
 
+    option('--tsan-libdispatch-test', toggle_true,
+           help='run TSan (compiler-rt) libdispatch tests')
+
     option('--skip-test-osx', toggle_false('test_osx'),
            help='skip testing Swift stdlibs for Mac OS X')
     option('--skip-test-linux', toggle_false('test_linux'),
