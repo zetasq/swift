@@ -251,6 +251,23 @@ extension _KeyValueCodingAndObserving {
         }
     }
     
+    /// Overload for keyPath having a optional target value.
+    /// Solve https://bugs.swift.org/browse/SR-6066
+    public func observe<Value>(
+            _ keyPath: KeyPath<Self, Value?>,
+            options: NSKeyValueObservingOptions = [],
+            changeHandler: @escaping (Self, NSKeyValueObservedChange<Value?>) -> Void)
+        -> NSKeyValueObservation {
+        return NSKeyValueObservation(object: self as! NSObject, keyPath: keyPath, options: options) { (obj, change) in
+            let notification = NSKeyValueObservedChange(kind: change.kind,
+                                                        newValue: change.newValue as? Value?,
+                                                        oldValue: change.oldValue as? Value?,
+                                                        indexes: change.indexes,
+                                                        isPrior: change.isPrior)
+            changeHandler(obj as! Self, notification)
+        }
+    }
+    
     public func willChangeValue<Value>(for keyPath: __owned KeyPath<Self, Value>) {
         (self as! NSObject).willChangeValue(forKey: _bridgeKeyPathToString(keyPath))
     }
